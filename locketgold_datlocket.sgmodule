@@ -1,6 +1,6 @@
 #!url=https://raw.githubusercontent.com/linkhot24s/datlocket/main/locketgold_datlocket.sgmodule
 #!name=LocketGold-Datlocket
-#!desc=Crack
+#!desc=datlocket
 
 [Script]
 # ~ By
@@ -14,8 +14,3 @@ deleteHeader = type=http-request, pattern=^https:\/\/api\.revenuecat\.com\/.+\/(
 
 [MITM]
 hostname = %APPEND% api.revenuecat.com
-
-[General]
-# Fake IP Mỹ (US IP)
-dns-server = 8.8.8.8, 1.1.1.1, 208.67.222.222, 9.9.9.9
-geoip-country = US
