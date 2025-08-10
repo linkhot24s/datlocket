@@ -1,3 +1,4 @@
+#!url=https://raw.githubusercontent.com/linkhot24s/datlocket/main/locketgold_datlocket.sgmodule
 #!name = locketunlock – Datlocket
 #!desc = Unlock Premium (no ads, PiP, background play), Locket Gold, Spotify Premium
 #!author = Datlocket
@@ -14,7 +15,6 @@ AND,((DOMAIN-SUFFIX,googlevideo.com),(PROTOCOL,UDP)),REJECT
 AND,((DOMAIN,youtubei.googleapis.com),(PROTOCOL,UDP)),REJECT
 
 [URL Rewrite]
-# YouTube no ads + Premium features
 (^https?:\/\/[\w-]+\.googlevideo\.com\/(?!dclk_video_ads).+?)&ctier=L(&.+?),ctier,(.+) $1$2$3 302
 ^https?:\/\/[\w-]+\.googlevideo\.com\/(?!(dclk_video_ads|videoplayback\?)).+&oad _ reject-200
 ^https?:\/\/(www|s)\.youtube\.com\/api\/stats\/ads _ reject-200
@@ -25,8 +25,8 @@ AND,((DOMAIN,youtubei.googleapis.com),(PROTOCOL,UDP)),REJECT
 http-request ^https:\/\/(spclient\.wg\.spotify\.com|.*-spclient\.spotify\.com(:443)?)\/user-customization-service\/v1\/customize$ header-del if-none-match
 
 [Script]
-# YouTube Premium unlock + no ads
-youtube.response = type=http-response,pattern=^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/(browse|next|player|search|reel\/reel_watch_sequence|guide|account\/get_setting|get_watch),requires-body=1,max-size=-1,binary-body-mode=1,script-path=https://raw.githubusercontent.com/Maasea/sgmodule/master/Script/Youtube/youtube.response.js,argument="{\"lyricLang\":\"\",\"captionLang\":\"\",\"blockUpload\":false,\"blockImmersive\":false,\"debug\":false}"
+# YouTube Premium unlock + no ads (giữ nguyên model whatshub với tùy chọn UI)
+youtube.response = type=http-response,pattern=^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/(browse|next|player|search|reel\/reel_watch_sequence|guide|account\/get_setting|get_watch),requires-body=1,max-size=-1,binary-body-mode=1,engine={{{脚本执行引擎}}},script-path=https://raw.githubusercontent.com/Maasea/sgmodule/master/Script/Youtube/youtube.response.js,argument="{\"lyricLang\":\"{{{歌词翻译语言}}}\",\"captionLang\":\"{{{字幕翻译语言}}}\",\"blockUpload\":{{{屏蔽上传按钮}}},\"blockImmersive\":{{{屏蔽选段按钮}}},\"debug\":{{{启用调试模式}}}}"
 
 # Locket Gold
 revenuecat = type=http-response,pattern=^https:\/\/api\.revenuecat\.com\/.+\/(receipts$|subscribers\/[^/]+$),script-path=https://raw.githubusercontent.com/vuong2023/shad/main/js/Locket_Ohoang7.js,requires-body=true,max-size=-1,timeout=60
