@@ -1,38 +1,41 @@
-// Locket Gold Unlock - Keep Gold but allow new images
-// Author: DatLocket
+#!url=https://raw.githubusercontent.com/linkhot24s/datlocket/main/locketgold_datlocket.sgmodule
+#!url=https://raw.githubusercontent.com/linkhot24s/datlocket/main/locketgold_datlocket.sgmodule
+#!name = Datlocket
+#!desc = Unlock lk gold,SPOTIFY no ads
+#!author = Datlocket
+#!homepage = https://github.com/linkhot24s
+#!icon = https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/YouTube.png
 
-const url = $request.url;
+# Shadowrocket: 2025-08-10 23:31:43
+[General]
+update-url = https://raw.githubusercontent.com/linkhot24s/datlocket/main/multi_unlock.sgmodule
 
-if (url.includes("api.revenuecat.com/v1/subscribers/")) {
-    let fakeGold = {
-        "subscriber": {
-            "entitlements": {
-                "gold": {
-                    "expires_date": "2099-12-31T23:59:59Z",
-                    "product_identifier": "com.locket.gold.yearly",
-                    "purchase_date": "2025-01-01T00:00:00Z"
-                }
-            },
-            "first_seen": "2025-01-01T00:00:00Z",
-            "last_seen": "2025-08-13T00:00:00Z",
-            "original_app_user_id": "$RCAnonymousID:gold_unlock",
-            "original_purchase_date": "2025-01-01T00:00:00Z",
-            "subscriptions": {
-                "com.locket.gold.yearly": {
-                    "billing_issues_detected_at": null,
-                    "expires_date": "2099-12-31T23:59:59Z",
-                    "is_sandbox": false,
-                    "original_purchase_date": "2025-01-01T00:00:00Z",
-                    "period_type": "normal",
-                    "purchase_date": "2025-01-01T00:00:00Z",
-                    "store": "app_store",
-                    "unsubscribe_detected_at": null
-                }
-            }
-        }
-    };
+[Rule]
+# YouTube
+AND,((DOMAIN-SUFFIX,googlevideo.com),(PROTOCOL,UDP)),REJECT
+AND,((DOMAIN,youtubei.googleapis.com),(PROTOCOL,UDP)),REJECT
 
-    $done({ body: JSON.stringify(fakeGold) });
-} else {
-    $done({});
-}
+[URL Rewrite]
+(^https?:\/\/[\w-]+\.googlevideo\.com\/(?!dclk_video_ads).+?)&ctier=L(&.+?),ctier,(.+) $1$2$3 302
+^https?:\/\/[\w-]+\.googlevideo\.com\/(?!(dclk_video_ads|videoplayback\?)).+&oad _ reject-200
+^https?:\/\/(www|s)\.youtube\.com\/api\/stats\/ads _ reject-200
+^https?:\/\/(www|s)\.youtube\.com\/(pagead|ptracking) _ reject-200
+^https?:\/\/s\.youtube\.com\/api\/stats\/qoe\?adcontext _ reject-200
+
+# Spotify
+http-request ^https:\/\/(spclient\.wg\.spotify\.com|.*-spclient\.spotify\.com(:443)?)\/user-customization-service\/v1\/customize$ header-del if-none-match
+
+[Script]
+# YouTube Premium unlock + no ads (giữ nguyên model whatshub với tùy chọn UI)
+youtube.response = type=http-response,pattern=^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/(browse|next|player|search|reel\/reel_watch_sequence|guide|account\/get_setting|get_watch),requires-body=1,max-size=-1,binary-body-mode=1,engine={{{脚本执行引擎}}},script-path=https://raw.githubusercontent.com/Maasea/sgmodule/master/Script/Youtube/youtube.response.js,argument="{"lyricLang":"{{{歌词翻译语言}}}","captionLang":"{{{字幕翻译语言}}}","blockUpload":{{{屏蔽上传按钮}}},"blockImmersive":{{{屏蔽选段按钮}}},"debug":{{{启用调试模式}}}}"
+
+# Locket
+revenuecat = type=http-response,pattern=^https:\/\/api\.revenuecat\.com\/.+\/(receipts$|subscribers\/[^/]+$),script-path=https://raw.githubusercontent.com/vuong2023/shad/main/js/Locket_Ohoang7.js,requires-body=true,max-size=-1,timeout=60
+deleteHeader = type=http-request,pattern=^https:\/\/api\.revenuecat\.com\/.+\/(receipts|subscribers),script-path=https://raw.githubusercontent.com/vuong2023/shad/main/js/deleteHeader.js,timeout=60
+
+# Spotify
+spotify-json = type=http-request,pattern=^https:\/\/(spclient\.wg\.spotify\.com|.*-spclient\.spotify\.com(:443)?)\/(artistview\/v1\/artist|album-entity-view\/v2\/album)\/,requires-body=0,script-path=https://raw.githubusercontent.com/app2smile/rules/master/js/spotify-json.js
+spotify-proto = type=http-response,pattern=^https:\/\/(spclient\.wg\.spotify\.com|.*-spclient\.spotify\.com(:443)?)\/(bootstrap\/v1\/bootstrap|user-customization-service\/v1\/customize)$,requires-body=1,binary-body-mode=1,max-size=0,script-path=https://raw.githubusercontent.com/app2smile/rules/master/js/spotify-proto.js
+
+[MITM]
+hostname = %APPEND% -redirector*.googlevideo.com,*.googlevideo.com,www.youtube.com,s.youtube.com,youtubei.googleapis.com,api.revenuecat.com,spclient.wg.spotify.com,*spclient.spotify.com
