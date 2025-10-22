@@ -3,12 +3,11 @@ const mapping = {
   '%E8%BD%A6%E7%A5%A8%E7%A5%A8': ['vip+watch_vip'],
   'Locket': ['Gold']
 };
-// =========   Phần cố định  ========= // 
 // =========  @Datlocket ========= // 
 var ua = $request.headers["User-Agent"] || $request.headers["user-agent"],
     obj = JSON.parse($response.body);
 
-obj.Attention = "Chúc mừng bạn! Vui lòng không bán hoặc chia sẻ cho người khác!";
+obj.Attention = "Datlocket";
 
 var datlocket_sub = {
   is_sandbox: false,
